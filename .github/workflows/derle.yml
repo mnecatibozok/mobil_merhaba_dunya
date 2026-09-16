@@ -6,27 +6,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Node 24 uyumlu en güncel kod çekme motoru
-    - uses: actions/checkout@v4.2.2
+    # 1. Node 24 destekli en güncel kod çekme eklentisi (v4 tamamen kaldırıldı)
+    - uses: actions/checkout@v5
 
-    # 2. Uyarıda talep edilen, Node 24 ile tam uyumlu resmi Java 17 eklentisi
+    # 2. Node 24 ile tam uyumlu resmi Java eklentisi
     - name: Java 17 Kur
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. Web yüklemelerindeki eksik altyapıyı tamamlayan güncel Gradle eklentisi
-    - name: Resmi Gradle Motorunu Kur
-      uses: gradle/actions/setup-gradle@v4.3.0
+    # 3. Sürükle-bırak hatalarını önleyen tamamen güncel Gradle eklentisi
+    - name: Resmi Gradle Motorunu Kur ve Derle
+      uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-version: '8.11' # En kararlı ve güncel sürüm
+        gradle-version: '8.11'
 
-    # 4. Uygulamayı doğrudan APK olarak paketler
+    # 4. Projeyi APK olarak derleme komutu
     - name: APK Derle
       run: gradle assembleDebug
 
-    # 5. Üretilen hazır APK'yı indirme butonuna teslim eder
+    # 5. Üretilen APK'yı indirme paneline teslim eder
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
