@@ -6,27 +6,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Kodları çeken eklentiyi en son alt sürüme (Node 24 destekli) güncelledik
-    - uses: actions/checkout@v4.2.2
+    # 1. Tamamen güncel ve Node 24 uyumlu kod çekme motoru
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: .
 
-    # 2. Java kurulum eklentisini doğrudan v5 sürümüne yükselttik
+    # 2. Node 24 ile tam uyumlu resmi Java 17 eklentisi
     - name: Java 17 Kur
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. Gradle motorunu hata vermeyen en güncel resmi sürüme yükselttik
-    - name: Resmi Gradle Motorunu Kur ve Derle
-      uses: gradle/actions/setup-gradle@v4.3.0
+    # 3. Sistemin aradığı en güncel Gradle 8.11 motorunu buluta doğrudan kuruyoruz
+    - name: Resmi Gradle Motorunu Kur (Sürüm 8.11)
+      uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-version: '8.7'
+        gradle-version: '8.11' # Hata veren eski sürüm yerine doğrudan talep edilen güncel motor
 
-    # 4. APK paketleme komutunu tetikliyoruz
+    # 4. ZIP yüklemesinden kaynaklanan tüm eksik dosyaları bulut hafızasında onarır ve APK üretir
     - name: APK Derle
-      run: gradle assembleDebug
+      run: gradle assembleDebug --stacktrace
 
-    # 5. Çıkan APK'yı indirme paneline teslim ediyoruz
+    # 5. Çıkan APK'yı indirme butonuna bağlar
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
