@@ -6,32 +6,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Node 24 destekli en güncel kod çekme eklentisi (v4 tamamen kaldırıldı)
-    - uses: actions/checkout@v5
+    # 1. Kodları Node 24 uyumlu resmi eklentiyle çekiyoruz
+    - uses: actions/checkout@v4
 
-    # Node 24 ile tam uyumlu en yeni Java eklentisi (v4 tamamen kaldırıldı)
+    # 2. Resmi Java eklentisini kuruyoruz
     - name: Java 17 Kur
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Sürükle-bırak yaparken eksik kalabilen gerekli derleme araçlarını kurar
-    - name: Gradle Yapısını Tamamla
-      run: |
-        curl -sL https://gradle.org -o gradle.zip
-        unzip -q gradle.zip
-        export PATH=$PWD/gradle-8.7/bin:$PATH
-        gradle wrapper --gradle-version 8.7
+    # 3. Projenizde hiçbir Gradle dosyası olmasa bile otomatik tamamlama yapan resmi eklenti
+    - name: Resmi Gradle Motorunu Kur ve Derle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: '8.7' # Sürükle bırak hatalarını tamamen bypass eder
 
-    - name: Gradle Calistirma Izni Ver
-      run: chmod +x gradlew
+    # 4. Doğrudan APK derleme komutunu çalıştırıyoruz
+    - name: APK Derle
+      run: gradle assembleDebug
 
-    # Projeyi hatasız bir şekilde APK olarak paketler
-    - name: Projeyi APK Olarak Derle
-      run: ./gradlew assembleDebug
-
-    # Hazır APK dosyasını indirme paneline iletir
+    # 5. Çıkan APK dosyasını sisteme yüklüyoruz
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
