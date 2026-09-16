@@ -6,16 +6,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Node 24 tabanlı en güncel resmi eklentiler (Node 20 bağımlılığı sıfırlandı)
-    - uses: actions/checkout@v4.3.0
+    # Node 24 destekli en güncel kod çekme eklentisi (v4 tamamen kaldırıldı)
+    - uses: actions/checkout@v5
 
+    # Node 24 ile tam uyumlu en yeni Java eklentisi (v4 tamamen kaldırıldı)
     - name: Java 17 Kur
-      uses: actions/setup-java@v4.3.0
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Sürükle-bırak yöntemiyle eksik kalabilen temel Android Wrapper dosyalarını indirir
+    # Sürükle-bırak yaparken eksik kalabilen gerekli derleme araçlarını kurar
     - name: Gradle Yapısını Tamamla
       run: |
         curl -sL https://gradle.org -o gradle.zip
@@ -26,11 +27,11 @@ jobs:
     - name: Gradle Calistirma Izni Ver
       run: chmod +x gradlew
 
-    # Android uygulamasını sıfırdan temiz bir şekilde APK haline getirir
+    # Projeyi hatasız bir şekilde APK olarak paketler
     - name: Projeyi APK Olarak Derle
       run: ./gradlew assembleDebug
 
-    # Çıkan hazır APK dosyasını panelde indirilebilir duruma getirir
+    # Hazır APK dosyasını indirme paneline iletir
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
