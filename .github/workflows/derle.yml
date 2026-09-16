@@ -1,0 +1,22 @@
+name: Android Studio Olmadan APK Derle
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Java Kur
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Gradle'i Otomatik Yukle ve Derle
+      run: |
+        gradle init --type basic
+        gradle assembleDebug
+    - name: APK'yi Teslim Et
+      uses: actions/upload-artifact@v4
+      with:
+        name: Uygulamam-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
