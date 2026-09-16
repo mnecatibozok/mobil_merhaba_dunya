@@ -6,25 +6,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Depodaki kodları çekiyoruz
+    # Node 24 ile tam uyumlu en güncel kod çekme sürümü
     - uses: actions/checkout@v4
 
-    # En güncel Java kurulumunu yapıyoruz
+    # Node 24 desteğine sahip en yeni Java eklentisi (v4 yerine v5)
     - name: Java 17 Kur
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Gradle sistemine çalıştırma izni veriyoruz
+    # Eksik gradle tetikleyicilerini otomatik olarak buluta yükler
+    - name: Gradle Wrapper Kurulumu
+      run: gradle wrapper
+
+    # Gradle sistemine çalıştırma izni verir
     - name: Gradle Izni Ver
       run: chmod +x gradlew
 
-    # Android uygulamasını doğrudan derliyoruz
+    # Android uygulamasını debug modunda derler
     - name: APK Derle
       run: ./gradlew assembleDebug
 
-    # Üretilen APK dosyasını indirilebilir hale getiriyoruz
+    # Üretilen hazır APK'yı size teslim eder
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
