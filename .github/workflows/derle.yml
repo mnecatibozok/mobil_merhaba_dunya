@@ -4,29 +4,30 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Yeni Node.js sürümlerinin hata vermesini önlemek için güvenli mod ortam değişkeni
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
-    # En güncel v5 sürümlerine geçiş yapıldı
-    - uses: actions/checkout@v4 
-    
-    # setup-java eklentisi en son kararlı v5 sürümüne güncellendi
-    - name: Java Kur
+    # Depodaki kodları çekiyoruz
+    - uses: actions/checkout@v4
+
+    # En güncel Java kurulumunu yapıyoruz
+    - name: Java 17 Kur
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
-        
-    - name: Gradle'i Otomatik Yukle ve Derle
-      run: |
-        gradle init --type basic
-        gradle assembleDebug
-        
+
+    # Gradle sistemine çalıştırma izni veriyoruz
+    - name: Gradle Izni Ver
+      run: chmod +x gradlew
+
+    # Android uygulamasını doğrudan derliyoruz
+    - name: APK Derle
+      run: ./gradlew assembleDebug
+
+    # Üretilen APK dosyasını indirilebilir hale getiriyoruz
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
         name: Uygulamam-APK
         path: app/build/outputs/apk/debug/app-debug.apk
+
