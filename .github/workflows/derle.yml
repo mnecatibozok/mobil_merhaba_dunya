@@ -6,28 +6,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. En güncel Node 24 uyumlu kod çekme motoru
+    # 1. Kodları çeken en güncel resmi v5 eklentisi (Node 24 uyumlu)
     - uses: actions/checkout@v5
 
-    # 2. En güncel Node 24 uyumlu resmi Java eklentisi
+    # 2. Resmi Java v5 eklentisi (Node 24 uyumlu)
     - name: Java 17 Kur
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. Hata veren @v4 yerine tamamen güncel @v4.3.0+ (veya doğrudan güncel motor) kullanımı
-    - name: Resmi Gradle Motorunu Kur ve Derle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: '8.11'
-        cache-disabled: true # Cache uyuşmazlığı hatalarını kökten engeller
+    # 3. Üçüncü parti eklenti kullanmadan, Linux sistemine Gradle'ı doğrudan kuruyoruz
+    - name: Sistem Seviyesinde Gradle Kur
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gradle
 
-    # 4. Doğrudan APK paketleme komutu
+    # 4. Uygulamayı doğrudan yerleşik sistem aracıyla APK olarak paketliyoruz
     - name: APK Derle
       run: gradle assembleDebug
 
-    # 5. Çıkan APK dosyasını indirme paneline teslim eder
+    # 5. Üretilen hazır APK dosyasını indirme paneline teslim ediyoruz
     - name: APK'yi Teslim Et
       uses: actions/upload-artifact@v4
       with:
